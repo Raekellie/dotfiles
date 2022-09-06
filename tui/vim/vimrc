@@ -1,0 +1,263 @@
+" see: /usr/share/vim/vimfiles/archlinux.vim ; 'suffixes', 'ruler', 'backspace'
+set nocompatible
+let s:limited_t=&t_Co < 16
+let mapleader=' '
+
+" Plugins {{{
+" Initialisation {{{
+call plug#begin('$XDG_DATA_HOME/vim/plugged')
+" Toolkits
+Plug 'ycm-core/YouCompleteMe',	{'do': './install.py --clangd-completer --rust-completer'}
+Plug 'rust-lang/rust.vim',		{'for': ['rust', 'toml']}
+
+Plug 'eraserhd/parinfer-rust',	{'for': ['yuck'], 'do': 'cargo build --release'}
+Plug 'elkowar/yuck.vim',		{'for': ['yuck']}
+
+
+" Tools
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'justinmk/vim-sneak'
+Plug 'Raimondi/delimitMate'
+" TODO: consider vim-commentary and vim-surround
+
+
+" Little things
+Plug 'Chiel92/vim-autoformat',	{'on': 'Autoformat'}
+Plug 'Konfekt/FastFold'
+Plug 'vimwiki/vimwiki',			{'on': 'VimwikiIndex'}
+Plug 'junegunn/goyo.vim',		{'on': 'Goyo'}
+
+" Look
+if !s:limited_t
+	Plug 'ayu-theme/ayu-vim'
+	Plug 'itchyny/lightline.vim'
+endif
+call plug#end()
+" }}}
+" Configuration {{{
+" YouCompleteMe {{{
+let g:ycm_global_ycm_extra_conf='$DOTFILES/tui/vim/files/ycm_extra_conf.global.py'
+let g:ycm_autoclose_preview_window_after_completion=1
+let g:ycm_key_detailed_diagnostics=''
+let g:ycm_auto_hover=''
+let g:ycm_confirm_extra_conf=0
+"let g:ycm_keep_logfiles=1
+"let g:ycm_log_level='debug'
+" }}}
+" rust.vim {{{
+let g:rust_recommended_style=0
+let g:rustfmt_autosave=1
+let g:rust_fold=1
+" }}}
+
+" fzf.vim {{{
+let g:fzf_layout={'down': '20%'}
+let g:fzf_preview_window=[]
+" }}}
+" vim-gitgutter {{{
+let g:gitgutter_map_keys=0
+let g:gitgutter_grep='rg'
+" }}}
+" delimitMate {{{
+let g:delimitMate_expand_cr=1
+let g:delimitMate_balance_matchpairs=1
+" }}}
+" netrw {{{
+let g:netrw_home=$XDG_DATA_HOME.'/vim'
+let g:netrw_banner=0
+let g:netrw_winsize=10
+let g:netrw_liststyle=3
+let g:netrw_fastbrowse=2
+let g:netrw_special_syntax=1
+" }}}
+
+" vim-autoformat {{{
+let g:autoformat_autoindent=1
+" }}}
+" vimwiki {{{
+let g:vimwiki_list=[{'path': '~/documents/vimwiki/wiki/', 'path_html': '~/documents/vimwiki/html/'}]
+" }}}
+
+" ayu.vim {{{
+let ayucolor="dark"
+" }}}
+" lightline {{{
+let g:lightline={'colorscheme': 'ayu_dark'}
+" }}}
+" }}}
+" Mappings {{{
+nnoremap <leader>yd :YcmDiags<cr>
+nmap <leader>yh <plug>(YCMHover)
+
+
+nnoremap <leader>f :Rg<cr>
+nnoremap <leader>e :Files<cr>
+nnoremap <leader>b :Buffers<cr>
+
+nnoremap <f3> :Lex<cr>
+
+
+nnoremap <leader>ww :VimwikiIndex<cr>
+" }}}
+" }}}
+" Vim {{{
+" Directories {{{
+" Have Vim follow the XDG specification. Thanks: https://blog.joren.ga/vim-xdg
+let &directory	=		$XDG_STATE_HOME .	'/vim'
+let &viminfofile=		&directory .		'/viminfo'
+let &backupdir	=		&directory .		'/backup//'	| call mkdir(&backupdir,	'p', 0700)
+let &undodir	=		&directory .		'/undo//'	| call mkdir(&undodir,		'p', 0700)
+let &viewdir	=		&directory .		'/view//'	| call mkdir(&viewdir,		'p', 0700)
+let &directory	.=		'/swap//'						| call mkdir(&directory,	'p', 0700)
+
+set runtimepath^=$DOTFILES/tui/vim
+set runtimepath^=$XDG_DATA_HOME/vim
+set runtimepath+=$DOTFILES/tui/vim/after
+
+call mkdir($XDG_DATA_HOME.'/vim/spell', 'p', 0700)
+" }}}
+" Options {{{
+" Kitty does not support 'background color erase' (see FAQ)
+let &t_ut=''
+
+set guioptions=''
+set mouse=a
+set belloff=all
+
+
+set modeline modelines=1
+set nomodelineexpr
+
+set encoding=utf-8 fileencoding=utf-8
+
+set updatetime=2000
+" timeoutlen: mappings ; ttimeoutlen: key codes
+set ttimeoutlen=50
+
+syntax enable
+filetype plugin indent on
+
+set foldenable foldmethod=marker
+set smartcase hlsearch incsearch
+
+set autoindent smartindent noexpandtab tabstop=4 shiftwidth=0 softtabstop=0
+set textwidth=100
+set nowrap
+
+set splitright
+set scrolloff=6
+
+
+set path=$PWD/**
+set wildmenu
+set wildchar=<tab>
+set wildcharm=<a-tab>
+set wildignore=.git/,.svn/,.hg/,*.lock
+set wildignore+=tags,build/,target/
+
+set completeopt=menuone,popup
+set completepopup=height:60,width:80,border:on,align:item,highlight:InfoPopup
+
+set grepprg=rg\ --vimgrep
+set grepformat=%f:%l:%c:%m
+
+"set spell spelllang=en
+
+" Taken from archlinux.vim
+"set backspace=indent,eol,start
+"set suffixes+=.aux,.bbl,.blg,.brf,.cb,.dvi,.idx,.ilg,.ind,.inx,.jpg,.jpeg,.log,.out,.png,.toc
+"set suffixes-=.h
+" }}}
+" Look {{{
+if !s:limited_t
+	set noshowmode
+	set laststatus=2
+
+	set termguicolors
+	set background=dark
+	colorscheme ayu
+
+	" Ensures the SignColumn has the same background color as the rest of the gutter
+	highlight! link SignColumn LineNr
+
+	" Sometimes I prefer the transparent look
+	hi! Normal guibg=NONE
+endif
+
+set number relativenumber numberwidth=6
+set cursorline cursorcolumn
+"set colorcolumn=100
+set signcolumn=yes
+
+" For reference:
+" [▼] U+25BC: Black Down-Pointing Triangle
+" [▸] U+25B8: Black Right-Pointing Triangle
+" [␣] U+2423: Open Box
+" [•] U+2022: Bullet
+
+" Displays hidden characters such as tabs and trailing spaces
+set list
+if !s:limited_t
+	set listchars=tab:▸\ ,nbsp:▼,trail:•
+else
+	set listchars=tab:»\ ,nbsp:▼,trail:•
+endif
+" }}}
+
+" Mappings {{{
+noremap <left> <nop>
+noremap <down> <nop>
+noremap <up> <nop>
+noremap <right> <nop>
+
+" TODO: resizing mappings
+
+nnoremap <leader>s :%s/\<<c-r><c-w>\>/
+" }}}
+" Abbreviations {{{
+abbreviate teh the
+" }}}
+" Custom {{{
+" Wayland clipboard {{{
+if !s:limited_t
+	function! s:WlCopy(...)
+		let l:register='0'
+		if a:0 > 1
+			echoerr 'WlCopy may take 1 argument naming a Vim register to read from, defaulting to \"0.'
+		elseif a:0 == 1
+			let l:register=a:1
+		endif
+
+		silent call system('wl-copy '..shellescape(getreg(l:register)))
+	endfunction
+
+	command! -nargs=* WlCopy call s:WlCopy(<f-args>)
+	command! WlPaste silent r ! 'wl-paste'
+endif
+" }}}
+
+" Execute the current file. Mnemonic: (Single|Script|Shebang)run
+command! Srun :execute 'vertical terminal '..fnameescape(expand('%:p'))
+
+" Automatically read in the contents from template files when appropriate
+augroup onnew_templates
+	au!
+	autocmd BufNewFile * silent!
+				\	execute '0read $DOTFILES/tui/vim/files/templates/'..expand('<afile>:e')
+				\ |	execute '$d_'
+				\ |	execute '0'
+augroup END
+
+
+
+au BufWrite *.{asm,c,h,cpp,hpp,sh,zsh,py} :Autoformat
+
+" - taken from defaults.vim
+command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+			\ | wincmd p | diffthis
+" }}}
+" }}}
+" vim:set foldlevel=1:

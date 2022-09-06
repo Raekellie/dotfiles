@@ -1,0 +1,7 @@
+plugins/
+.zkbd/
+
+.zsh_history
+
+.zcompcache
+.zcompdump

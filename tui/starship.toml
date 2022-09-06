@@ -1,0 +1,76 @@
+format = """
+$directory\
+$cmd_duration\
+$status\
+$fill\
+$git_branch\
+$git_status\
+$username\
+$hostname\
+$time\
+$line_break\
+$character\
+"""
+add_newline = false
+
+[character]
+success_symbol = "❯"
+error_symbol = "❯"
+vicmd_symbol = "❮"
+format = "[$symbol](bold bright-white) "
+
+[cmd_duration]
+min_time = 2_000
+show_milliseconds = false
+style = "bold yellow"
+format = "[$duration]($style)"
+
+[directory]
+truncation_length = 0
+truncate_to_repo = false
+fish_style_pwd_dir_length = 2
+read_only = " "
+read_only_style = "red"
+style = "bold green"
+format = "[$path]($style)[$read_only]($read_only_style) "
+
+[fill]
+symbol = " "
+style = ""
+
+[git_branch]
+symbol = ""
+truncation_length = 8
+truncation_symbol = "..."
+style = "bright-black"
+format = " [$symbol$branch]($style)"
+
+[git_status]
+modified = "*"
+style = "bright-black"
+format = "[$modified$ahead_behind]($style)"
+
+[hostname]
+ssh_only = false
+trim_at = "."
+format =  "@[$hostname](white)"
+
+[line_break]
+disabled = false
+
+[status]
+style = "bold red"
+format = "[\\[$status\\]]($style)"
+disabled = false
+
+[time]
+time_format = "%T"
+style = "bright-black"
+format = " [$time]($style)"
+disabled = false
+
+[username]
+show_always = true
+style_root = "bold red"
+style_user = "bright-green"
+format = " [$user]($style)"

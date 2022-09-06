@@ -1,0 +1,181 @@
+; Variables {{{
+(defpoll    v-hostname      :interval "99h" "uname --nodename")
+(defpoll    v-username      :interval "99h" "whoami")
+(defpoll    v-uptime        :interval "1s"  "$DOTFILES/gui/eww/scripts/get_uptime.sh 'up: '")
+
+(defpoll    v-time          :interval "1s"  "date '+%H:%M'")
+(defpoll    v-date          :interval "1s"  "date '+%a, %d %B'")
+(defpoll    v-weather       :interval "1m"  "$DOTFILES/gui/eww/scripts/cache_weather.sh $((60*60))")
+
+
+(deflisten  v-volume-sink   :initial  "-"   "$DOTFILES/gui/eww/scripts/volume_listener.sh sink")
+(deflisten  v-volume-source :initial  "+"   "$DOTFILES/gui/eww/scripts/volume_listener.sh source")
+
+; ifstat gives out slightly fancier output than ${EWW_NET}
+; Definitely not copium speaking after writing the script... (No really; it switches to Kb/s if the number in B/s gets too big)
+(defpoll    v-network-up    :interval "1s"  "$DOTFILES/gui/eww/scripts/get_network_activity.sh enp4s0 upload")
+(defpoll    v-network-down  :interval "1s"  "$DOTFILES/gui/eww/scripts/get_network_activity.sh enp4s0 download")
+(defpoll    v-cpu-temp      :interval "1s"  "sensors | awk '/k10temp-pci-00c3/','/EOF/' | awk 'NR==3 {print $2}' | cut --characters '2-'")
+; }}}
+; Parts {{{
+(defwidget part-telemetry-circular[?class name value ?suffix ?detailed onclick]
+  (eventbox :class "hover circular ${class}" :cursor "pointer"
+    (button :onclick "${onclick}"
+      (box :orientation "v" :halign "fill" :valign "center" :space-evenly true
+         (label :class "circular-label" :text "${name} ")
+        
+        (circular-progress :class "circular-outer" :value value :start-at 75 :thickness 5 :clockwise true
+         (label :class "circular-inner monospace" :text "${round(value, 0)}${suffix}"))
+        (label :class "circular-detailed monospace" :text "${detailed}")))))    
+
+(defwidget part-telemetry-single[?class name onclick value ?unit]
+  (eventbox :class "hover single ${class}" :cursor "pointer"
+    (button :onclick onclick
+      (box :orientation "h" :halign "fill" :valign "center" :space-evenly true
+            (label :class "single-label" :text "${name}")
+            (label :class "single-value" :text "${value}${unit}")))))
+
+(defwidget part-button-custom[?class onclick text]
+  (eventbox :class "hover cbtn ${class}" :cursor "pointer"
+    (button :onclick "${onclick}"
+      (label :class "cbtn-label" :text "${text}"))))
+
+(defwidget part-telemetry-double[?class ?class-1 ?class-2 name onclick label-1 label-2 value-1 value-2]
+  (eventbox :class "hover double ${class}" :cursor "pointer"
+    (button :onclick onclick
+      (box :orientation "v" :halign "fill" :valign "center" :space-evenly true
+            (box :orientation "h" :halign "fill" :valign "center" :space-evenly true
+              (box :class "double-name" :orientation "h" :halign "center" :valign "center" :space-evenly false
+                (label :text "${name} "))
+              (box :class "double-labels" :orientation "v" :halign "end" :valign "center" :space-evenly true
+               (label :class "double-label-1 ${class-1}"   :text label-1)
+               (label :class "double-label-2 ${class-2}" :text label-2))
+              (box :class "double-values" :orientation "v" :halign "center" :valign "center" :space-evenly true
+                (label :class "double-value-1 monospace ${class-1}"   :text "${value-1}")
+                (label :class "double-value-2 monospace ${class-2}" :text "${value-2}")))))))
+; }}}
+; Widgets {{{
+(defwidget status-session[]
+  (box :orientation "v" :halign "fill" :valign "center" :space-evenly true
+      (box :class "session-toggle" :orientation "v" :halign "fill" :valign "center" :space-evenly true
+        (label :class "session-time" :text v-time)
+        (label :class "session-date" :text "${v-date}"))
+      (part-button-custom :class "session-uptime"
+                          :onclick "xdg-open 'localhost:19999'"
+                          :text "${v-username}@${v-hostname} | ${v-uptime} ")))
+
+(defwidget status-system[]
+  (box :orientation "h" :halign "fill" :valign "center" :space-evenly true
+      (part-telemetry-circular  :class "resources-cpu" :name "CPU" :suffix "%"
+                                :value  {EWW_CPU.avg}
+                                :onclick "xdg-open 'localhost:19999/#menu_cpu'"
+                                :detailed v-cpu-temp)
+      (part-telemetry-circular  :class "resources-ram" :name "RAM" :suffix "%"
+                                :value  {EWW_RAM.used_mem_perc}
+                                :onclick "xdg-open 'localhost:19999/#menu_mem'"
+                                :detailed {"${round(EWW_RAM.used_mem/1000/1000/1000,2)} GB"})
+      (part-telemetry-circular  :class "resources-drive" :name "DRIVE" :suffix "%"
+                                :value  {EWW_DISK["/"].used_perc}
+                                :onclick "xdg-open 'localhost:19999/#menu_disk'"
+                                :detailed {"${round(EWW_DISK["/"].used/1000/1000/1000,2)} GB"})))
+
+(defwidget shortcuts-power[]
+  (box :class "power" :orientation "h" :halign "fill" :valign "center" :space-evenly true
+    (part-button-custom  :text "襤" :onclick "systemctl poweroff")
+    (part-button-custom  :text "ﰇ"  :onclick "systemctl reboot")
+    (part-button-custom  :text "⏾"  :onclick "systemctl suspend")))
+
+(defwidget shortcuts-programs[]
+  (box :class "programs" :orientation "h" :halign "fill" :valign "center" :space-evenly true
+    (part-button-custom :text ""   :onclick "wl-copy -c")
+    (part-button-custom :text ""   :onclick "xpad & disown")
+    (part-button-custom :text "淋"  :onclick "otd-gui & disown")))
+  
+
+(defwidget container-session[]
+  (box :class "container session" :orientation "v" :halign "center" :valign "center" :space-evenly true
+    (status-session)))
+
+(defwidget container-telemetry-resources[]
+  (box :class "container telemetry resources" :orientation "v" :halign "center" :valign "center" :space-evenly true
+    (status-system)))
+
+(defwidget container-telemetry-status[]
+  (box :class "container telemetry status" :orientation "v" :halign "center" :valign "center" :space-evenly true
+    (part-telemetry-double :name "NET"  :class "network"  :class-1 "up"         :class-2 "down"
+                           :label-1 "祝"    :label-2 ""      :value-1 v-network-up :value-2 v-network-down
+                           :onclick "xdg-open 'localhost:19999/#menu_net'")
+    (part-telemetry-double :name "AUDIO"  :class "audio"  :class-1 "sink"               :class-2 "source"
+                           :label-1 "蓼"  :label-2 ""    :value-1 "${v-volume-sink}"  :value-2 "${v-volume-source}"
+                           :onclick "pavucontrol & disown")))
+
+(defwidget container-shortcuts[]
+  (box :class "container shortcuts" :orientation "v" :halign "center" :valign "center" :space-evenly true
+    (shortcuts-programs)))
+
+(defwidget container-weather[]
+  (box :class "container weather" :orientation "v" :halign "fill" :valign "start" :space-evenly false
+    (box :class "today" :orientation "v" :halign "fill" :valign "center" :space-evenly true
+        (image :class "weather" :path v-weather))))
+; }}}
+; Windows {{{
+(defwindow dash-weather
+  :monitor    0
+  :geometry   (geometry :x      "9%"
+                        :y      "6%"
+                        :width  "0%"
+                        :height "0%"
+                        :anchor "top right")
+  :stacking   "fg"
+  :exclusive  false
+  :focusable  false
+  (container-weather))
+
+(defwindow dash-session
+  :monitor    0
+  :geometry   (geometry :x      "9%"
+                        :y      "15%"
+                        :width  "0%"
+                        :height "0%"
+                        :anchor "top right")
+  :stacking   "fg"
+  :exclusive  false
+  :focusable  false
+  (container-session))
+
+(defwindow dash-telemetry-resources
+  :monitor    0
+  :geometry   (geometry :x      "9%"
+                        :y      "35%"
+                        :width  "0%"
+                        :height "0%"
+                        :anchor "top right")
+  :stacking   "fg"
+  :exclusive  false
+  :focusable  false
+  (container-telemetry-resources))
+
+(defwindow dash-telemetry-status
+  :monitor    0
+  :geometry   (geometry :x      "9%"
+                        :y      "65%"
+                        :width  "0%"
+                        :height "0%"
+                        :anchor "top right")
+  :stacking   "fg"
+  :exclusive  false
+  :focusable  false
+  (container-telemetry-status))
+
+(defwindow dash-shortcuts
+  :monitor    0
+  :geometry   (geometry :x      "9%"
+                        :y      "86%"
+                        :width  "0%"
+                        :height "0%"
+                        :anchor "top right")
+  :stacking   "fg"
+  :exclusive  false
+  :focusable  false
+  (container-shortcuts))
+; }}}
