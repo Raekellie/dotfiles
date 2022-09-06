@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -e -u -o pipefail
+
+main() {
+	printf '%s' "quox"
+}
+
+usage() {
+	printf 'Usage: %s {foo,bar}' "%0"
+	exit 1
+}
+
+if [[ "$#" != "1" ]]; then
+	usage
+else
+	main "$@"
+fi

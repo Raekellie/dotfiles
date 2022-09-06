@@ -1,0 +1,68 @@
+/*@import "../colorschemes/srcery.css";*/
+
+* {
+	all: unset;
+	font-family: Inter, Iosevka;
+	font-size: 12pt;
+
+	color: @brightwhite;
+	background-color: transparent;
+
+	transition-property: background-color;
+	transition-duration: 0.3s;
+}
+window#waybar {}
+window#waybar box {
+	padding: 0.15em 0;
+}
+
+tooltip,
+#tray menu * {
+	font-size: 10pt;
+	background-color: rgba(0, 0, 0, 0.7);
+}
+
+#network,
+#pulseaudio,
+#cpu,
+#memory,
+#clock {
+	background-color: @black; /* slategray also looks nice */
+
+	min-width: 5em;
+
+	margin-right: 0.5em;
+	padding: 0.125em 0;
+}
+
+#workspaces button {
+	background-color: transparent;
+
+	min-width: 2em;
+	margin-left: 0.5em;
+	padding-top: 0.2em;
+
+	border-top: 0.1em solid @black;
+}
+#workspaces button.focused {
+	border-color: @blue;
+}
+#workspaces button.urgent {
+	border-color: @red;
+}
+
+#tray menu * {
+	padding: 0.15em 0.05em;
+}
+#tray menu separator {
+	background-color: transparent;
+}
+
+#network,
+#pulseaudio {
+	min-width: 11em;
+}
+
+#clock {
+	min-width: 8em;
+}
