@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e -u -o pipefail
 
-IMG="/tmp/tmp.cached-weather-report"
+IMG="/tmp/$(whoami)-cached-weather-report"
 
 get_report() {
 	COORDS=$(cat "$HOME/documents/coords.txt")
