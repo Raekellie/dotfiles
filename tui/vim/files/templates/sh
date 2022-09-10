@@ -6,7 +6,7 @@ main() {
 }
 
 usage() {
-	printf 'Usage: %s {foo,bar}' "%0"
+	printf 'Usage: %s {foo,bar}' "$0"
 	exit 1
 }
 
