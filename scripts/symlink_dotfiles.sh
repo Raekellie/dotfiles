@@ -10,6 +10,8 @@ declare -A HOME_FILES=(
 declare -A XDG_CONFIG_HOME_FILES=(
 ["gdb"]="tui/gdb"
 ["ranger"]="tui/ranger"
+["mpd"]="tui/mpd"
+["ncmpcpp"]="tui/ncmpcpp"
 
 ["locale.conf"]="gui/locale.conf"
 ["environment.d"]="gui/environment.d"
