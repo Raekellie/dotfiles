@@ -313,7 +313,7 @@
 ## Note: Custom command that will be executed each time song changes. Useful for
 ## notifications etc.
 ##
-execute_on_song_change = notify-send "Now playing:" "$(ncmpcpp --quiet --current-song '%t{ - %a}')" --app-name "ncmpcpp" --icon "$(bash /home/$(whoami)/.config/dotfiles/tui/ncmpcpp/get_now_playing_cover.sh)"
+execute_on_song_change = notify-send "Now playing:" "$(ncmpcpp --quiet --current-song '%t{ - %a}')" --app-name "ncmpcpp" --icon "$(bash /home/$(whoami)/.config/dotfiles/tui/ncmpcpp/get_now_playing_cover.sh)" &
 #
 ##
 ## Note: Custom command that will be executed each time player state

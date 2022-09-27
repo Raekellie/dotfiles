@@ -1,33 +1,18 @@
-#!/usr/bin/env bash
-set -e -u -o pipefail
+#!/usr/bin/env -S bash -Eeuo pipefail
 
-main() {
-	case "$1" in
-		open)
-			swaymsg "mode 'dash'"
+# $1 | action: {open,close}
 
-			eww open-many dash-weather dash-session dash-telemetry-resources dash-telemetry-status dash-shortcuts
-			wofi --show run --conf $DOTFILES/desktop/wofi/config --fork
-			;;
-		close)
-			swaymsg "mode 'default'"
+case "$1" in
+	open)
+		swaymsg "mode 'dash'"
 
-			eww close-all
-			pkill wofi
-			;;
-		*)
-			usage
-			;;
-	esac
-}
+		eww open-many dash-weather dash-session dash-telemetry-resources dash-telemetry-status dash-shortcuts
+		wofi --show run --conf "$DOTFILES/desktop/wofi/config" --fork
+		;;
+	close)
+		swaymsg "mode 'default'"
 
-usage() {
-	printf 'Usage: %s (open|close)' "$0"
-	exit 1
-}
-
-if [[ "$#" != "1" ]]; then
-	usage
-else
-	main "$@"
-fi
+		eww close-all
+		pkill wofi
+		;;
+esac

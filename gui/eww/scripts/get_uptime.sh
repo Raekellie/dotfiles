@@ -1,17 +1,5 @@
-#!/usr/bin/env bash
-set -e -u -o pipefail
+#!/usr/bin/env -S bash -Eeuo pipefail
 
-main() {
-	uptime --pretty | sed 's/up\s*/'"$1"'/' | sed -E 's/\s*day(s)?/d/' | sed -E 's/\s*hour(s)?/h/' | sed -E 's/\s*minute(s)?/m/'
-}
+# $1 | prefix: string that will appear the output
 
-usage() {
-	printf 'Usage: %s PREFIX' "$0"
-	exit 1
-}
-
-if [[ "$#" != "1" ]]; then
-	usage
-else
-	main "$@"
-fi
+uptime --pretty | sed 's/up\s*/'"$1"'/' | sed -E 's/\s*day(s)?/d/' | sed -E 's/\s*hour(s)?/h/' | sed -E 's/\s*minute(s)?/m/'

@@ -3,6 +3,7 @@ $directory\
 $cmd_duration\
 $status\
 $fill\
+$python\
 $git_branch\
 $git_status\
 $username\
@@ -14,62 +15,76 @@ $character\
 add_newline = false
 
 [character]
+disabled = false
 success_symbol = "❯"
 error_symbol = "❯"
 vicmd_symbol = "❮"
 format = "[$symbol](bold bright-white) "
 
 [cmd_duration]
+disabled = false
 min_time = 2_000
 show_milliseconds = false
 style = "bold yellow"
 format = "[$duration]($style)"
 
 [directory]
+disabled = false
 truncation_length = 0
 truncate_to_repo = false
 fish_style_pwd_dir_length = 2
-read_only = " "
+read_only = " "
 read_only_style = "red"
 style = "bold green"
 format = "[$path]($style)[$read_only]($read_only_style) "
 
 [fill]
+disabled = false
 symbol = " "
 style = ""
 
+[python]
+disabled = false
+symbol = ""
+style = "yellow"
+format = "[$symbol (\\($virtualenv\\))]($style)"
+
 [git_branch]
-symbol = ""
+disabled = false
+symbol = ""
 truncation_length = 8
 truncation_symbol = "..."
 style = "bright-black"
 format = " [$symbol$branch]($style)"
 
 [git_status]
+disabled = false
 modified = "*"
 style = "bright-black"
 format = "[$modified$ahead_behind]($style)"
 
 [hostname]
+disabled = false
 ssh_only = false
 trim_at = "."
-format =  "@[$hostname](white)"
+format = "@[$hostname](white)"
 
 [line_break]
 disabled = false
 
 [status]
+disabled = false
 style = "bold red"
 format = "[\\[$status\\]]($style)"
-disabled = false
 
 [time]
+disabled = false
 time_format = "%T"
 style = "bright-black"
 format = " [$time]($style)"
-disabled = false
 
 [username]
+disabled = false
 show_always = true
 style_root = "bold red"
 style_user = "bright-green"
