@@ -1,34 +1,19 @@
-#!/usr/bin/env bash
-set -e -u -o pipefail
+#!/usr/bin/env -S bash -Eeuo pipefail
 
-main() {
-	# WM agnostic
-	RANDR="wlr-randr --output HDMI-A-1"
-	LOCKER="swaylock --config $DOTFILES/desktop/sway/swaylock.conf"
+# $1 | trigger: {now,idle} - whether to set swayidle on a timeout or lock immediately
 
-	case "$1" in
-		now)
-			$LOCKER
-			;;
-		idle)
-			swayidle -w \
-				timeout $((3*60)) "$LOCKER" \
-				timeout $((4*60)) "$RANDR --off" resume "$RANDR --on" \
-				before-sleep "$LOCKER"
-			;;
-		*)
-			usage
-			;;
-	esac
-}
+# WM agnostic
+RANDR="wlr-randr --output HDMI-A-1"
+LOCKER="swaylock --config $DOTFILES/desktop/sway/swaylock.conf"
 
-usage() {
-	printf 'Usage: %s (now|idle)' "$0"
-	exit 1
-}
-
-if [[ "$#" != "1" ]]; then
-	usage
-else
-	main "$@"
-fi
+case "$1" in
+	now)
+		$LOCKER
+		;;
+	idle)
+		swayidle -w \
+			timeout $((3*60)) "$LOCKER" \
+			timeout $((4*60)) "$RANDR --off" resume "$RANDR --on" \
+			before-sleep "$LOCKER"
+		;;
+		esac

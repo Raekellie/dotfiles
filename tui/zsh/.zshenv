@@ -1,5 +1,5 @@
 # Directories {{{
-source "/home/$(whoami)/.config/dotfiles/gui/environment.d/envvars.conf"
+source "$HOME/.config/dotfiles/gui/environment.d/envvars.conf"
 export ZDOTDIR="$DOTFILES/tui/zsh"
 # }}}
 # Preferences {{{

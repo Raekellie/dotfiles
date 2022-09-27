@@ -1,5 +1,4 @@
-#!/usr/bin/env bash
-set -e -u -o pipefail
+#!/usr/bin/env -S bash -Eeuo pipefail
 
 # Featuring `printf`s and `git pull`s, a "Plugin Manager" written by yours truly!
 # Minimal *and* works! It even has colors!
@@ -44,7 +43,7 @@ main() {
 }
 
 usage() {
-	printf 'Usage: %s (update|list)' "$0"
+	printf 'Usage: %s {update,list}\n' "$0"
 	exit 1
 }
 
