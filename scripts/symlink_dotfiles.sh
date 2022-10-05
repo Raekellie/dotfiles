@@ -38,8 +38,8 @@ handle_array() {
 	done
 }
 
-printf '=> %s...\n' "$HOME"
+printf '[I] %s...\n' "$HOME"
 handle_array "$(declare -p HOME_FILES)" "$HOME"
 
-printf '=> %s...\n' "$XDG_CONFIG_HOME"
+printf '[I] %s...\n' "$XDG_CONFIG_HOME"
 handle_array "$(declare -p XDG_CONFIG_HOME_FILES)" "$XDG_CONFIG_HOME"
