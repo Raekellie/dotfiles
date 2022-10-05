@@ -54,20 +54,19 @@ disabled = false
 symbol = ""
 truncation_length = 8
 truncation_symbol = "..."
-style = "bright-black"
-format = " [$symbol$branch]($style)"
+format = " [$symbol](bold red)[$branch](white)"
 
 [git_status]
 disabled = false
 modified = "*"
-style = "bright-black"
+style = "bold dimmed red"
 format = "[$modified$ahead_behind]($style)"
 
 [hostname]
 disabled = false
 ssh_only = false
 trim_at = "."
-format = "@[$hostname](white)"
+format = "@[$hostname](dimmed white)"
 
 [line_break]
 disabled = false
@@ -80,12 +79,11 @@ format = "[\\[$status\\]]($style)"
 [time]
 disabled = false
 time_format = "%T"
-style = "bright-black"
-format = " [$time]($style)"
+format = " [$time](dimmed white)"
 
 [username]
 disabled = false
 show_always = true
 style_root = "bold red"
-style_user = "bright-green"
+style_user = "dimmed bright-green"
 format = " [$user]($style)"
