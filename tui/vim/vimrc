@@ -1,4 +1,4 @@
-" see: /usr/share/vim/vimfiles/archlinux.vim ; 'suffixes', 'ruler', 'backspace'
+" TODO: see 'suffixes', 'ruler', 'backspace'
 set nocompatible
 let s:limited_t=&t_Co < 16
 let mapleader=' '
@@ -8,31 +8,30 @@ let mapleader=' '
 call plug#begin('$XDG_DATA_HOME/vim/plugged')
 " Toolkits
 Plug 'ycm-core/YouCompleteMe',	{'do': './install.py --clangd-completer --rust-completer'}
-Plug 'rust-lang/rust.vim',		{'for': ['rust', 'toml']}
+Plug 'rust-lang/rust.vim',	{'for': ['rust', 'toml']}
 
-Plug 'eraserhd/parinfer-rust',	{'for': ['yuck'], 'do': 'cargo build --release'}
-Plug 'elkowar/yuck.vim',		{'for': ['yuck']}
-
+"Plug 'eraserhd/parinfer-rust',	{'for': ['yuck'], 'do': 'cargo build --release'}
+"Plug 'elkowar/yuck.vim',	{'for': ['yuck']}
 
 " Tools
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
-Plug 'justinmk/vim-sneak'
 Plug 'Raimondi/delimitMate'
-" TODO: consider vim-commentary and vim-surround
 
 
 " Little things
 Plug 'Chiel92/vim-autoformat',	{'on': 'Autoformat'}
 Plug 'Konfekt/FastFold'
-Plug 'vimwiki/vimwiki',			{'on': 'VimwikiIndex'}
-Plug 'junegunn/goyo.vim',		{'on': 'Goyo'}
+Plug 'vimwiki/vimwiki',		{'on': 'VimwikiIndex'}
+Plug 'junegunn/goyo.vim',	{'on': 'Goyo'}
 
 " Look
 if !s:limited_t
-	Plug 'ayu-theme/ayu-vim'
+	Plug 'embark-theme/vim', { 'as': 'embark', 'branch': 'main' }
 	Plug 'itchyny/lightline.vim'
 endif
 call plug#end()
@@ -81,11 +80,11 @@ let g:autoformat_autoindent=1
 let g:vimwiki_list=[{'path': '~/documents/vimwiki/wiki/', 'path_html': '~/documents/vimwiki/html/'}]
 " }}}
 
-" ayu.vim {{{
-let ayucolor="dark"
+" embark-theme {{{
+let g:embark_terminal_italics = 1
 " }}}
 " lightline {{{
-let g:lightline={'colorscheme': 'ayu_dark'}
+let g:lightline={'colorscheme': 'embark'}
 " }}}
 " }}}
 " Mappings {{{
@@ -106,12 +105,12 @@ nnoremap <leader>ww :VimwikiIndex<cr>
 " Vim {{{
 " Directories {{{
 " Have Vim follow the XDG specification. Thanks: https://blog.joren.ga/vim-xdg
-let &directory	=		$XDG_STATE_HOME .	'/vim'
-let &viminfofile=		&directory .		'/viminfo'
-let &backupdir	=		&directory .		'/backup//'	| call mkdir(&backupdir,	'p', 0700)
-let &undodir	=		&directory .		'/undo//'	| call mkdir(&undodir,		'p', 0700)
-let &viewdir	=		&directory .		'/view//'	| call mkdir(&viewdir,		'p', 0700)
-let &directory	.=		'/swap//'						| call mkdir(&directory,	'p', 0700)
+let &directory	=	$XDG_STATE_HOME .	'/vim'
+let &viminfofile=	&directory .		'/viminfo'
+let &backupdir	=	&directory .		'/backup//'	| call mkdir(&backupdir,	'p', 0700)
+let &undodir	=	&directory .		'/undo//'	| call mkdir(&undodir,		'p', 0700)
+let &viewdir	=	&directory .		'/view//'	| call mkdir(&viewdir,		'p', 0700)
+let &directory	.=	'/swap//'				| call mkdir(&directory,	'p', 0700)
 
 set runtimepath^=$DOTFILES/tui/vim
 set runtimepath^=$XDG_DATA_HOME/vim
@@ -143,9 +142,9 @@ filetype plugin indent on
 set foldenable foldmethod=marker
 set smartcase hlsearch incsearch
 
-set autoindent smartindent noexpandtab tabstop=4 shiftwidth=0 softtabstop=0
-set textwidth=100
-set nowrap
+set noexpandtab shiftwidth=0 softtabstop=0
+set autoindent smartindent tabstop=8
+set textwidth=100 nowrap
 
 set splitright
 set scrolloff=6
@@ -178,13 +177,13 @@ if !s:limited_t
 
 	set termguicolors
 	set background=dark
-	colorscheme ayu
+	colorscheme embark
 
 	" Ensures the SignColumn has the same background color as the rest of the gutter
-	highlight! link SignColumn LineNr
+	"highlight! link SignColumn LineNr
 
-	" Sometimes I prefer the transparent look
-	hi! Normal guibg=NONE
+	" For when I'm in a transparent mood
+	"highlight! Normal guibg=NONE
 endif
 
 set number relativenumber numberwidth=6
@@ -198,12 +197,11 @@ set signcolumn=yes
 " [␣] U+2423: Open Box
 " [•] U+2022: Bullet
 
-" Displays hidden characters such as tabs and trailing spaces
-set list
+set nolist
 if !s:limited_t
-	set listchars=tab:▸\ ,nbsp:▼,trail:•
+	set listchars=tab:▸\ ,nbsp:▼,trail:•,eol:$
 else
-	set listchars=tab:»\ ,nbsp:▼,trail:•
+	set listchars=tab:»\ ,nbsp:▼,trail:•,eol:$
 endif
 " }}}
 
