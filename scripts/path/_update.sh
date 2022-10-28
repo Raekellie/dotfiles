@@ -10,11 +10,10 @@ msg() {
 
 # (command) -> ()
 cmd() {
-	echo ' | '"$@"
-	eval "$@"
+	# https://stackoverflow.com/questions/56098830/how-to-printf
+	printf ' | %s\n' "$*"
 
-	# printf runs for every arg in $@ which is weird
-	#printf '%s' "$@"
+	eval "$*"
 }
 
 msg "System packages"
@@ -27,7 +26,7 @@ msg "ZSH plugins"
 cmd $DOTFILES/tui/zsh/plm.sh update
 
 msg "Vim plugins"
-cmd vim +PlugUpdate +qa # still not sure which looks fancier between `-c ":CMD"` and `+CMD`
+cmd vim +PlugUpdate +qa
 
 msg "Done!"
 echo ""
