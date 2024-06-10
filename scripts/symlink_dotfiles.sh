@@ -5,18 +5,14 @@ COLOR="tput setaf 6"
 RESET="tput sgr0"
 
 declare -A HOME_FILES=(
-[".zshenv"]="tui/zsh/.zshenv"
+[".zshenv"]="config/zsh/.zshenv"
 )
 declare -A XDG_CONFIG_HOME_FILES=(
-["gdb"]="tui/gdb"
-["ranger"]="tui/ranger"
-["mpd"]="tui/mpd"
-["ncmpcpp"]="tui/ncmpcpp"
+["gdb"]="config/gdb"
+["ranger"]="config/ranger"
 
-["locale.conf"]="gui/locale.conf"
-["environment.d"]="gui/environment.d"
-["user-dirs.dirs"]="gui/user-dirs.dirs"
-["user-dirs.locale"]="gui/user-dirs.locale"
+["locale.conf"]="environment/locale.conf"
+["environment.d"]="environment/environment.d"
 )
 
 
