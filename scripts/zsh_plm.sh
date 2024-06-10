@@ -3,11 +3,13 @@
 # Featuring `printf`s and `git pull`s, a "Plugin Manager" written by yours truly!
 # Minimal *and* works! It even has colors!
 
+PLUGINS_FOLDER="$XDG_DATA_HOME/zsh_plm"
+
 COLOR="tput setaf 6"
 RESET="tput sgr0"
 
 declare -a REPOS=(
-"https://github.com/romkatv/zsh-defer"
+#"https://github.com/romkatv/zsh-defer"
 
 "https://github.com/zdharma-continuum/fast-syntax-highlighting"
 "https://github.com/zsh-users/zsh-autosuggestions"
@@ -16,10 +18,11 @@ declare -a REPOS=(
 main() {
 	case "$1" in
 		update)
+			mkdir -p "$PLUGINS_FOLDER"
 			for PLUGIN in "${REPOS[@]}"; do
 				printf "=> $($COLOR)"'%s'"$($RESET)...\n" "$PLUGIN"
 
-				cd "$ZDOTDIR/plugins"
+				cd "$PLUGINS_FOLDER"
 				DIR="${PLUGIN##*/}"
 
 				if ! [ -d $DIR ]; then
@@ -33,7 +36,7 @@ main() {
 		list)
 			for PLUGIN in "${REPOS[@]}"; do
 				FILE="${PLUGIN##*/}"
-				printf '%s/plugins/%s/%s.plugin.zsh\n' "$ZDOTDIR" "$FILE" "$FILE"
+				printf '%s/%s/%s.plugin.zsh\n' "$PLUGINS_FOLDER" "$FILE" "$FILE"
 			done
 			;;
 		*)

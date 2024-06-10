@@ -3,105 +3,7 @@ set nocompatible
 let s:limited_t=&t_Co < 16
 let mapleader=' '
 
-" Plugins {{{
-" Initialisation {{{
-call plug#begin('$XDG_DATA_HOME/vim/plugged')
-" Toolkits
-Plug 'ycm-core/YouCompleteMe',	{'do': './install.py --clangd-completer --rust-completer'}
-Plug 'rust-lang/rust.vim',	{'for': ['rust', 'toml']}
 
-"Plug 'eraserhd/parinfer-rust',	{'for': ['yuck'], 'do': 'cargo build --release'}
-"Plug 'elkowar/yuck.vim',	{'for': ['yuck']}
-
-" Tools
-Plug 'junegunn/fzf.vim'
-Plug 'tpope/vim-abolish'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
-Plug 'Raimondi/delimitMate'
-
-
-" Little things
-Plug 'Chiel92/vim-autoformat',	{'on': 'Autoformat'}
-Plug 'Konfekt/FastFold'
-Plug 'vimwiki/vimwiki',		{'on': 'VimwikiIndex'}
-Plug 'junegunn/goyo.vim',	{'on': 'Goyo'}
-
-" Look
-if !s:limited_t
-	Plug 'embark-theme/vim', { 'as': 'embark', 'branch': 'main' }
-	Plug 'itchyny/lightline.vim'
-endif
-call plug#end()
-" }}}
-" Configuration {{{
-" YouCompleteMe {{{
-let g:ycm_global_ycm_extra_conf='$DOTFILES/tui/vim/files/ycm_extra_conf.global.py'
-let g:ycm_autoclose_preview_window_after_completion=1
-let g:ycm_key_detailed_diagnostics=''
-let g:ycm_auto_hover=''
-let g:ycm_confirm_extra_conf=0
-"let g:ycm_keep_logfiles=1
-"let g:ycm_log_level='debug'
-" }}}
-" rust.vim {{{
-let g:rust_recommended_style=0
-let g:rustfmt_autosave=1
-let g:rust_fold=1
-" }}}
-
-" fzf.vim {{{
-let g:fzf_layout={'down': '20%'}
-let g:fzf_preview_window=[]
-" }}}
-" vim-gitgutter {{{
-let g:gitgutter_map_keys=0
-let g:gitgutter_grep='rg'
-" }}}
-" delimitMate {{{
-let g:delimitMate_expand_cr=1
-let g:delimitMate_balance_matchpairs=1
-" }}}
-" netrw {{{
-let g:netrw_home=$XDG_DATA_HOME.'/vim'
-let g:netrw_banner=0
-let g:netrw_winsize=10
-let g:netrw_liststyle=3
-let g:netrw_fastbrowse=2
-let g:netrw_special_syntax=1
-" }}}
-
-" vim-autoformat {{{
-let g:autoformat_autoindent=1
-" }}}
-" vimwiki {{{
-let g:vimwiki_list=[{'path': '~/documents/vimwiki/wiki/', 'path_html': '~/documents/vimwiki/html/'}]
-" }}}
-
-" embark-theme {{{
-let g:embark_terminal_italics = 1
-" }}}
-" lightline {{{
-let g:lightline={'colorscheme': 'embark'}
-" }}}
-" }}}
-" Mappings {{{
-nnoremap <leader>yd :YcmDiags<cr>
-nmap <leader>yh <plug>(YCMHover)
-
-
-nnoremap <leader>f :Rg<cr>
-nnoremap <leader>e :Files<cr>
-nnoremap <leader>b :Buffers<cr>
-
-nnoremap <f3> :Lex<cr>
-
-
-nnoremap <leader>ww :VimwikiIndex<cr>
-" }}}
-" }}}
 " Vim {{{
 " Directories {{{
 " Have Vim follow the XDG specification. Thanks: https://blog.joren.ga/vim-xdg
@@ -112,9 +14,9 @@ let &undodir	=	&directory .		'/undo//'	| call mkdir(&undodir,		'p', 0700)
 let &viewdir	=	&directory .		'/view//'	| call mkdir(&viewdir,		'p', 0700)
 let &directory	.=	'/swap//'				| call mkdir(&directory,	'p', 0700)
 
-set runtimepath^=$DOTFILES/tui/vim
+set runtimepath^=$DOTFILES/config/vim
 set runtimepath^=$XDG_DATA_HOME/vim
-set runtimepath+=$DOTFILES/tui/vim/after
+set runtimepath+=$DOTFILES/config/vim/after
 
 call mkdir($XDG_DATA_HOME.'/vim/spell', 'p', 0700)
 " }}}
@@ -143,8 +45,8 @@ set foldenable foldmethod=marker
 set smartcase hlsearch incsearch
 
 set noexpandtab shiftwidth=0 softtabstop=0
-set autoindent smartindent tabstop=8
-set textwidth=100 nowrap
+set autoindent smartindent tabstop=4
+set textwidth=120 nowrap
 
 set splitright
 set scrolloff=6
@@ -177,7 +79,6 @@ if !s:limited_t
 
 	set termguicolors
 	set background=dark
-	colorscheme embark
 
 	" Ensures the SignColumn has the same background color as the rest of the gutter
 	"highlight! link SignColumn LineNr
@@ -244,7 +145,7 @@ command! Srun :execute 'vertical terminal '..fnameescape(expand('%:p'))
 augroup onnew_templates
 	au!
 	autocmd BufNewFile * silent!
-				\	execute '0read $DOTFILES/tui/vim/files/templates/'..expand('<afile>:e')
+				\	execute '0read $DOTFILES/config/vim/files/templates/'..expand('<afile>:e')
 				\ |	execute '$d_'
 				\ |	execute '0'
 augroup END
@@ -254,8 +155,112 @@ augroup END
 au BufWrite *.{asm,c,h,cpp,hpp,sh,zsh,py} :Autoformat
 
 " - taken from defaults.vim
-command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
-			\ | wincmd p | diffthis
+"command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+"			\ | wincmd p | diffthis
+" }}}
+" }}}
+" Plugins {{{
+" Initialisation {{{
+call plug#begin('$XDG_DATA_HOME/vim/plugged')
+" Toolkits
+Plug 'ycm-core/YouCompleteMe',	{'do': './install.py --clangd-completer --rust-completer'}
+"Plug 'rust-lang/rust.vim',	{'for': ['rust', 'toml']}
+
+"Plug 'eraserhd/parinfer-rust',	{'for': ['yuck'], 'do': 'cargo build --release'}
+"Plug 'elkowar/yuck.vim',	{'for': ['yuck']}
+
+" Tools
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'Raimondi/delimitMate'
+
+
+" Little things
+Plug 'vim-autoformat/vim-autoformat',	{'on': 'Autoformat'}
+Plug 'Konfekt/FastFold'
+"Plug 'vimwiki/vimwiki',		{'on': 'VimwikiIndex'}
+"Plug 'junegunn/goyo.vim',	{'on': 'Goyo'}
+
+" Look
+if !s:limited_t
+	Plug 'embark-theme/vim', { 'as': 'embark', 'branch': 'main' }
+	Plug 'itchyny/lightline.vim'
+endif
+call plug#end()
+" }}}
+" Configuration {{{
+" YouCompleteMe {{{
+let g:ycm_global_ycm_extra_conf='$DOTFILES/config/vim/files/ycm_extra_conf.global.py'
+let g:ycm_enable_inlay_hints=1
+let g:ycm_autoclose_preview_window_after_completion=1
+let g:ycm_key_detailed_diagnostics=''
+let g:ycm_auto_hover=''
+let g:ycm_confirm_extra_conf=0
+"let g:ycm_keep_logfiles=1
+"let g:ycm_log_level='debug'
+" }}}
+" rust.vim {{{
+let g:rust_recommended_style=0
+let g:rustfmt_autosave=1
+let g:rust_fold=1
+" }}}
+
+" fzf.vim {{{
+let g:fzf_layout={'down': '20%'}
+let g:fzf_preview_window=[]
+" }}}
+" vim-gitgutter {{{
+let g:gitgutter_map_keys=0
+let g:gitgutter_grep='rg'
+" }}}
+" delimitMate {{{
+let g:delimitMate_expand_cr=1
+let g:delimitMate_balance_matchpairs=1
+" }}}
+" netrw {{{
+let g:netrw_home=$XDG_DATA_HOME.'/vim'
+let g:netrw_banner=0
+let g:netrw_winsize=10
+let g:netrw_liststyle=3
+let g:netrw_fastbrowse=2
+let g:netrw_special_syntax=1
+" }}}
+
+" vim-autoformat {{{
+let g:autoformat_autoindent=1
+" }}}
+" vimwiki {{{
+let g:vimwiki_list=[{'path': '~/documents/vimwiki/wiki/', 'path_html': '~/documents/vimwiki/html/'}]
+" }}}
+
+" embark-theme {{{
+let g:embark_terminal_italics = 1
+
+if !s:limited_t
+	colorscheme embark
+endif
+" }}}
+" lightline {{{
+let g:lightline={'colorscheme': 'embark'}
+" }}}
+" }}}
+" Mappings {{{
+nnoremap <leader>yd :YcmDiags<cr>
+nmap <leader>yh <plug>(YCMHover)
+
+
+nnoremap <leader>f :Rg<cr>
+nnoremap <leader>e :Files<cr>
+nnoremap <leader>b :Buffers<cr>
+
+nnoremap <f3> :Lex<cr>
+
+
+nnoremap <leader>ww :VimwikiIndex<cr>
 " }}}
 " }}}
 " vim:set foldlevel=1:

@@ -23,7 +23,7 @@ msg "Rust"
 cmd rustup update stable
 
 msg "ZSH plugins"
-cmd $DOTFILES/tui/zsh/plm.sh update
+cmd $DOTFILES/scripts/zsh_plm.sh update
 
 msg "Vim plugins"
 cmd vim +PlugUpdate +qa

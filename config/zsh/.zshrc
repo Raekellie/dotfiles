@@ -1,13 +1,15 @@
 eval "$(starship init zsh)"
+
 # Plugins {{{
 # Sourcing {{{
 # The most incredible of plugin managers: `plm.sh`!
-for PLUGIN in $("$ZDOTDIR"/plm.sh list); do
-	zsh-defer source "$PLUGIN" 2>/dev/null || source "$PLUGIN"
+for PLUGIN in $("$DOTFILES/scripts"/zsh_plm.sh list); do
+	source "$PLUGIN" 2>/dev/null || source "$PLUGIN"
 done
 # }}}
 # Configuration {{{
 ZSH_AUTOSUGGEST_STRATEGY=(completion history)
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 # }}}
 # }}}
 
@@ -107,7 +109,7 @@ alias grep="grep --color=auto"
 alias diff="diff --color=auto"
 alias ip="ip --color=auto"
 
-alias vimpager="/usr/share/vim/vim90/macros/less.sh"
+alias vimpager="/usr/share/vim/vim91/macros/less.sh"
 
 # Too finicky to be worth memorising
 #if [[ "$TERM" == "xterm-kitty" ]]; then

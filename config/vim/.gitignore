@@ -1,0 +1,2 @@
+# The plugin manager, vim-plugged. Don't want it on the repository
+autoload/plug.vim
