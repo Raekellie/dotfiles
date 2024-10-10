@@ -12,7 +12,7 @@ let &viminfofile=	&directory .		'/viminfo'
 let &backupdir	=	&directory .		'/backup//'	| call mkdir(&backupdir,	'p', 0700)
 let &undodir	=	&directory .		'/undo//'	| call mkdir(&undodir,		'p', 0700)
 let &viewdir	=	&directory .		'/view//'	| call mkdir(&viewdir,		'p', 0700)
-let &directory	.=	'/swap//'				| call mkdir(&directory,	'p', 0700)
+let &directory	.=						'/swap//'	| call mkdir(&directory,	'p', 0700)
 
 set runtimepath^=$DOTFILES/config/vim
 set runtimepath^=$XDG_DATA_HOME/vim
@@ -163,11 +163,8 @@ au BufWrite *.{asm,c,h,cpp,hpp,sh,zsh,py} :Autoformat
 " Initialisation {{{
 call plug#begin('$XDG_DATA_HOME/vim/plugged')
 " Toolkits
-Plug 'ycm-core/YouCompleteMe',	{'do': './install.py --clangd-completer --rust-completer'}
+Plug 'ycm-core/YouCompleteMe',	{'do': './install.py --clangd-completer'}
 "Plug 'rust-lang/rust.vim',	{'for': ['rust', 'toml']}
-
-"Plug 'eraserhd/parinfer-rust',	{'for': ['yuck'], 'do': 'cargo build --release'}
-"Plug 'elkowar/yuck.vim',	{'for': ['yuck']}
 
 " Tools
 Plug 'junegunn/fzf.vim'
@@ -184,7 +181,7 @@ Plug 'vim-autoformat/vim-autoformat',	{'on': 'Autoformat'}
 Plug 'Konfekt/FastFold'
 "Plug 'vimwiki/vimwiki',		{'on': 'VimwikiIndex'}
 "Plug 'junegunn/goyo.vim',	{'on': 'Goyo'}
-
+"
 " Look
 if !s:limited_t
 	Plug 'embark-theme/vim', { 'as': 'embark', 'branch': 'main' }

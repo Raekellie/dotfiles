@@ -8,11 +8,8 @@ declare -A HOME_FILES=(
 [".zshenv"]="config/zsh/.zshenv"
 )
 declare -A XDG_CONFIG_HOME_FILES=(
-["gdb"]="config/gdb"
-["ranger"]="config/ranger"
-
-["locale.conf"]="environment/locale.conf"
-["environment.d"]="environment/environment.d"
+["environment.d"]="environment/environment.d/"
+["kitty"]="config/kitty"
 )
 
 

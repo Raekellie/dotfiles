@@ -17,10 +17,11 @@ cmd() {
 }
 
 msg "System packages"
-cmd paru
+#cmd paru
+cmd sudo pacman -Syu
 
-msg "Rust"
-cmd rustup update stable
+#msg "Rust"
+#cmd rustup update stable
 
 msg "ZSH plugins"
 cmd $DOTFILES/scripts/zsh_plm.sh update

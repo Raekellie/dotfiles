@@ -97,15 +97,33 @@ bindkey "^\ " reverse-menu-complete
 bindkey "^l" forward-word
 bindkey "^h" backward-word
 # }}}
+# Environment variables {{{
+export VISUAL="vim"
+export SYSTEMD_EDITOR="$VISUAL"
+#export BROWSER="elinks"
+
+export FZF_DEFAULT_COMMAND="fd --type f"
+export MANPAGER="less -R --use-color -Dd+y -Du+g"
+
+
+export VIMINIT="source $DOTFILES/config/vim/vimrc"
+export STARSHIP_CONFIG="$DOTFILES/config/starship.toml"
+
+export RUSTUP_HOME="$XDG_DATA_HOME/rust/rustup"
+export CARGO_HOME="$XDG_DATA_HOME/rust/cargo"
+
+export PATH="$PATH:$DOTFILES/environment/path:$CARGO_HOME/bin"
+# }}}
 # Aliases {{{
-alias ls="exa"
-alias l="ls -lb"
-alias ll="l -ah"
+alias ls="eza"
+# The ls equivalent to --binary is --human-readable (-h)
+alias l="ls -l --binary"
+alias ll="l --almost-all"
 
 alias se="sudoedit"
 
 
-alias grep="grep --color=auto"
+alias grep="rg --color=auto"
 alias diff="diff --color=auto"
 alias ip="ip --color=auto"
 
