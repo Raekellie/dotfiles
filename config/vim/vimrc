@@ -168,17 +168,17 @@ Plug 'ycm-core/YouCompleteMe',	{'do': './install.py --clangd-completer'}
 
 " Tools
 Plug 'junegunn/fzf.vim'
-Plug 'tpope/vim-abolish'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-fugitive'
+"Plug 'tpope/vim-abolish'
+"Plug 'tpope/vim-surround'
+"Plug 'tpope/vim-commentary'
+"Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 Plug 'Raimondi/delimitMate'
 
 
 " Little things
 Plug 'vim-autoformat/vim-autoformat',	{'on': 'Autoformat'}
-Plug 'Konfekt/FastFold'
+"Plug 'Konfekt/FastFold'
 "Plug 'vimwiki/vimwiki',		{'on': 'VimwikiIndex'}
 "Plug 'junegunn/goyo.vim',	{'on': 'Goyo'}
 "

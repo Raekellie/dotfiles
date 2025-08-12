@@ -123,6 +123,7 @@ alias ll="l --almost-all"
 alias se="sudoedit"
 
 
+alias ssh="TERM=xterm-color ssh"
 alias grep="rg --color=auto"
 alias diff="diff --color=auto"
 alias ip="ip --color=auto"
