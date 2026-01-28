@@ -1,10 +1,7 @@
 " TODO: see 'suffixes', 'ruler', 'backspace'
 set nocompatible
-let s:limited_t=&t_Co < 16
-let mapleader=' '
+let s:capable_t=&t_Co > 16 || has("gui_running")
 
-
-" Vim {{{
 " Directories {{{
 " Have Vim follow the XDG specification. Thanks: https://blog.joren.ga/vim-xdg
 let &directory	=	$XDG_STATE_HOME .	'/vim'
@@ -21,10 +18,6 @@ set runtimepath+=$DOTFILES/config/vim/after
 call mkdir($XDG_DATA_HOME.'/vim/spell', 'p', 0700)
 " }}}
 " Options {{{
-" Kitty does not support 'background color erase' (see FAQ)
-let &t_ut=''
-
-set guioptions=''
 set mouse=a
 set belloff=all
 
@@ -51,6 +44,7 @@ set textwidth=120 nowrap
 set splitright
 set scrolloff=6
 
+set hidden
 
 set path=$PWD/**
 set wildmenu
@@ -64,42 +58,20 @@ set completepopup=height:60,width:80,border:on,align:item,highlight:InfoPopup
 
 set grepprg=rg\ --vimgrep
 set grepformat=%f:%l:%c:%m
-
-"set spell spelllang=en
-
-" Taken from archlinux.vim
-"set backspace=indent,eol,start
-"set suffixes+=.aux,.bbl,.blg,.brf,.cb,.dvi,.idx,.ilg,.ind,.inx,.jpg,.jpeg,.log,.out,.png,.toc
-"set suffixes-=.h
 " }}}
 " Look {{{
-if !s:limited_t
-	set noshowmode
-	set laststatus=2
-
-	set termguicolors
-	set background=dark
-
-	" Ensures the SignColumn has the same background color as the rest of the gutter
-	"highlight! link SignColumn LineNr
-
-	" For when I'm in a transparent mood
-	"highlight! Normal guibg=NONE
-endif
-
 set number relativenumber numberwidth=6
 set cursorline cursorcolumn
 "set colorcolumn=100
-set signcolumn=yes
 
+set nolist
 " For reference:
 " [▼] U+25BC: Black Down-Pointing Triangle
 " [▸] U+25B8: Black Right-Pointing Triangle
 " [␣] U+2423: Open Box
 " [•] U+2022: Bullet
-
-set nolist
-if !s:limited_t
+if s:capable_t
+	set termguicolors
 	set listchars=tab:▸\ ,nbsp:▼,trail:•,eol:$
 else
 	set listchars=tab:»\ ,nbsp:▼,trail:•,eol:$
@@ -107,6 +79,8 @@ endif
 " }}}
 
 " Mappings {{{
+"let mapleader=' '
+
 noremap <left> <nop>
 noremap <down> <nop>
 noremap <up> <nop>
@@ -119,9 +93,9 @@ nnoremap <leader>s :%s/\<<c-r><c-w>\>/
 " Abbreviations {{{
 abbreviate teh the
 " }}}
-" Custom {{{
+" Commands {{{
 " Wayland clipboard {{{
-if !s:limited_t
+if $XDG_SESSION_TYPE == "wayland"
 	function! s:WlCopy(...)
 		let l:register='0'
 		if a:0 > 1
@@ -137,127 +111,36 @@ if !s:limited_t
 	command! WlPaste silent r ! 'wl-paste'
 endif
 " }}}
-
 " Execute the current file. Mnemonic: (Single|Script|Shebang)run
 command! Srun :execute 'vertical terminal '..fnameescape(expand('%:p'))
 
+" - taken from /usr/share/vim91/defaults.vim
+command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+			\ | wincmd p | diffthis
+" }}}
+" Autocommands {{{
 " Automatically read in the contents from template files when appropriate
 augroup onnew_templates
-	au!
+	autocmd!
 	autocmd BufNewFile * silent!
 				\	execute '0read $DOTFILES/config/vim/files/templates/'..expand('<afile>:e')
 				\ |	execute '$d_'
 				\ |	execute '0'
 augroup END
 
-
-
-au BufWrite *.{asm,c,h,cpp,hpp,sh,zsh,py} :Autoformat
-
-" - taken from defaults.vim
-"command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
-"			\ | wincmd p | diffthis
+augroup onwrite_format
+	autocmd!
+	autocmd BufWrite *.{asm,c,h,cpp,hpp,rs,sh,zsh,py} :Autoformat
+augroup END
 " }}}
-" }}}
-" Plugins {{{
-" Initialisation {{{
-call plug#begin('$XDG_DATA_HOME/vim/plugged')
-" Toolkits
-Plug 'ycm-core/YouCompleteMe',	{'do': './install.py --clangd-completer'}
-"Plug 'rust-lang/rust.vim',	{'for': ['rust', 'toml']}
 
-" Tools
-Plug 'junegunn/fzf.vim'
-"Plug 'tpope/vim-abolish'
-"Plug 'tpope/vim-surround'
-"Plug 'tpope/vim-commentary'
-"Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
-Plug 'Raimondi/delimitMate'
-
-
-" Little things
-Plug 'vim-autoformat/vim-autoformat',	{'on': 'Autoformat'}
-"Plug 'Konfekt/FastFold'
-"Plug 'vimwiki/vimwiki',		{'on': 'VimwikiIndex'}
-"Plug 'junegunn/goyo.vim',	{'on': 'Goyo'}
-"
-" Look
-if !s:limited_t
-	Plug 'embark-theme/vim', { 'as': 'embark', 'branch': 'main' }
-	Plug 'itchyny/lightline.vim'
+" Additional configuration files {{{
+" Kitty (the terminal) has some recommended settings regarding rendering 
+if $TERM =~ "kitty"
+	source $DOTFILES/config/vim/kitty.vim
 endif
-call plug#end()
-" }}}
-" Configuration {{{
-" YouCompleteMe {{{
-let g:ycm_global_ycm_extra_conf='$DOTFILES/config/vim/files/ycm_extra_conf.global.py'
-let g:ycm_enable_inlay_hints=1
-let g:ycm_autoclose_preview_window_after_completion=1
-let g:ycm_key_detailed_diagnostics=''
-let g:ycm_auto_hover=''
-let g:ycm_confirm_extra_conf=0
-"let g:ycm_keep_logfiles=1
-"let g:ycm_log_level='debug'
-" }}}
-" rust.vim {{{
-let g:rust_recommended_style=0
-let g:rustfmt_autosave=1
-let g:rust_fold=1
-" }}}
-
-" fzf.vim {{{
-let g:fzf_layout={'down': '20%'}
-let g:fzf_preview_window=[]
-" }}}
-" vim-gitgutter {{{
-let g:gitgutter_map_keys=0
-let g:gitgutter_grep='rg'
-" }}}
-" delimitMate {{{
-let g:delimitMate_expand_cr=1
-let g:delimitMate_balance_matchpairs=1
-" }}}
-" netrw {{{
-let g:netrw_home=$XDG_DATA_HOME.'/vim'
-let g:netrw_banner=0
-let g:netrw_winsize=10
-let g:netrw_liststyle=3
-let g:netrw_fastbrowse=2
-let g:netrw_special_syntax=1
-" }}}
-
-" vim-autoformat {{{
-let g:autoformat_autoindent=1
-" }}}
-" vimwiki {{{
-let g:vimwiki_list=[{'path': '~/documents/vimwiki/wiki/', 'path_html': '~/documents/vimwiki/html/'}]
-" }}}
-
-" embark-theme {{{
-let g:embark_terminal_italics = 1
-
-if !s:limited_t
-	colorscheme embark
+" Only enable plugins if the plugin manager is installed, and the terminal isn't a tty
+if s:capable_t && ! empty(globpath(&rtp, 'autoload/plug.vim'))
+	source $DOTFILES/config/vim/plugins.vim
 endif
 " }}}
-" lightline {{{
-let g:lightline={'colorscheme': 'embark'}
-" }}}
-" }}}
-" Mappings {{{
-nnoremap <leader>yd :YcmDiags<cr>
-nmap <leader>yh <plug>(YCMHover)
-
-
-nnoremap <leader>f :Rg<cr>
-nnoremap <leader>e :Files<cr>
-nnoremap <leader>b :Buffers<cr>
-
-nnoremap <f3> :Lex<cr>
-
-
-nnoremap <leader>ww :VimwikiIndex<cr>
-" }}}
-" }}}
-" vim:set foldlevel=1:
