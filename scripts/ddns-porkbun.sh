@@ -1,24 +1,41 @@
 #!/usr/bin/env -S bash -Eeuo pipefail
 
 DOMAIN_NAME='raquellie.com'
-SUBDOMAIN_NAME='*'
 
-COMMAND_GET_IP="curl --silent 'https://ifconfig.me/ip'"
-COMMAND_RESOLVE_DOMAIN="dig $SUBDOMAIN_NAME.$DOMAIN_NAME | awk '/^;; ANSWER SECTION:$/ { getline ; print \$5 }'"
+COMMAND_GET_IP="curl --fail --silent 'https://ifconfig.me/ip'"
 
 KEY_API=""
 KEY_SECRET=""
 
-CURRENT_IP=$(eval $COMMAND_GET_IP)
-CURRENT_DOMAIN_IP=$(eval $COMMAND_RESOLVE_DOMAIN)
+PORKBUN_RETRIEVE="https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/$DOMAIN_NAME/A"
+PORKBUN_UPDATE="https://api.porkbun.com/api/json/v3/dns/editByNameType/$DOMAIN_NAME/A"
 
-PORKBUN_ENDPOINT="https://api.porkbun.com/api/json/v3/dns/editByNameType/$DOMAIN_NAME/A/$SUBDOMAIN_NAME"
+if ! CURRENT_IP=$(eval $COMMAND_GET_IP); then
+	echo "[ERROR] Failed to retrieve the machine IP."
+	exit 1
+fi
 
-COMMAND_UPDATE_DNS="curl --silent --header 'Content-Type: application/json' --request POST --data '{\"secretapikey\":\"$KEY_SECRET\",\"apikey\":\"$KEY_API\",\"content\":\"$CURRENT_IP\",\"ttl\":\"600\"}' $PORKBUN_ENDPOINT"
+COMMAND_RETRIEVE_DNS="curl --silent --header 'Content-Type: application/json' --request POST --data '{\"secretapikey\":\"$KEY_SECRET\",\"apikey\":\"$KEY_API\"}' $PORKBUN_RETRIEVE"
+COMMAND_UPDATE_DNS="curl --silent --header 'Content-Type: application/json' --request POST --data '{\"secretapikey\":\"$KEY_SECRET\",\"apikey\":\"$KEY_API\",\"content\":\"$CURRENT_IP\",\"ttl\":\"600\"}' $PORKBUN_UPDATE"
+
+
+if ! CURRENT_DOMAIN_IP=$(eval "$COMMAND_RETRIEVE_DNS" | jq --exit-status --raw-output ".records[].content"); then
+	echo "[ERROR] Failed to retrieve the current DNS record."
+	exit 1
+fi
 
 if [[ "$CURRENT_IP" == "$CURRENT_DOMAIN_IP" ]]; then
-	echo "IP unchanged."
+	echo "[SUCCESS] DNS record unchanged."
+	exit 0
 else
-	echo "New IP: $CURRENT_IP. Sending API request."
-	eval $COMMAND_UPDATE_DNS
+	echo "[INFO] IP change detected. New machine IP: $CURRENT_IP. Sending API request..."
+
+	# Easier to handle errors by just checking the output for the "SUCCESS" string rather than extracting the JSON
+	if eval "$COMMAND_UPDATE_DNS" | grep -q "SUCCESS"; then
+		echo "[SUCCESS] DNS record changed."
+		exit 0
+	else
+		echo "[ERROR] Failed to change the record."
+		exit 1
+	fi
 fi
