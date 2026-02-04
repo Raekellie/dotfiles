@@ -1,21 +1,14 @@
-" TODO: see 'suffixes', 'ruler', 'backspace'
 set nocompatible
-let s:capable_t=&t_Co > 16 || has("gui_running")
+let s:capable_t=&t_Co > 16 || has("gui_running") 			" Checking against TTYs
+let s:path=fnamemodify(resolve(expand('<sfile>:p')), ':h')	" https://stackoverflow.com/questions/4976776/how-to-get-path-to-the-current-vimscript-being-executed
 
 " Directories {{{
-" Have Vim follow the XDG specification. Thanks: https://blog.joren.ga/vim-xdg
-let &directory	=	$XDG_STATE_HOME .	'/vim'
-let &viminfofile=	&directory .		'/viminfo'
-let &backupdir	=	&directory .		'/backup//'	| call mkdir(&backupdir,	'p', 0700)
-let &undodir	=	&directory .		'/undo//'	| call mkdir(&undodir,		'p', 0700)
-let &viewdir	=	&directory .		'/view//'	| call mkdir(&viewdir,		'p', 0700)
-let &directory	.=						'/swap//'	| call mkdir(&directory,	'p', 0700)
+" Vim follows the XDG Base Directory specification, except for the 'viminfofile'
+let &viminfofile =	$XDG_STATE_HOME .. '/vim/viminfo'
 
-set runtimepath^=$DOTFILES/config/vim
-set runtimepath^=$XDG_DATA_HOME/vim
-set runtimepath+=$DOTFILES/config/vim/after
-
-call mkdir($XDG_DATA_HOME.'/vim/spell', 'p', 0700)
+let &runtimepath =	$XDG_DATA_HOME	.. '/vim'	..	',' ..	&runtimepath
+let &runtimepath =	s:path			..	','		..			&runtimepath " This path will be the first in the list
+let &runtimepath .=	','				.. s:path	..			'/after'
 " }}}
 " Options {{{
 set mouse=a
@@ -50,6 +43,7 @@ set path=$PWD/**
 set wildmenu
 set wildchar=<tab>
 set wildcharm=<a-tab>
+" 'suffixes' can also be used to de-prioritise files in the wildmenu
 set wildignore=.git/,.svn/,.hg/,*.lock
 set wildignore+=tags,build/,target/
 
@@ -81,12 +75,10 @@ endif
 " Mappings {{{
 "let mapleader=' '
 
-noremap <left> <nop>
-noremap <down> <nop>
-noremap <up> <nop>
-noremap <right> <nop>
-
-" TODO: resizing mappings
+noremap <left>	<nop>
+noremap <down>	<nop>
+noremap <up>	<nop>
+noremap <right>	<nop>
 
 nnoremap <leader>s :%s/\<<c-r><c-w>\>/
 " }}}
@@ -113,17 +105,13 @@ endif
 " }}}
 " Execute the current file. Mnemonic: (Single|Script|Shebang)run
 command! Srun :execute 'vertical terminal '..fnameescape(expand('%:p'))
-
-" - taken from /usr/share/vim91/defaults.vim
-command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
-			\ | wincmd p | diffthis
 " }}}
 " Autocommands {{{
 " Automatically read in the contents from template files when appropriate
 augroup onnew_templates
 	autocmd!
 	autocmd BufNewFile * silent!
-				\	execute '0read $DOTFILES/config/vim/files/templates/'..expand('<afile>:e')
+				\	execute '0read ' .. s:path .. '/files/templates/'..expand('<afile>:e')
 				\ |	execute '$d_'
 				\ |	execute '0'
 augroup END
@@ -137,10 +125,10 @@ augroup END
 " Additional configuration files {{{
 " Kitty (the terminal) has some recommended settings regarding rendering 
 if $TERM =~ "kitty"
-	source $DOTFILES/config/vim/kitty.vim
+	execute 'source ' .. s:path .. '/kitty.vim'
 endif
-" Only enable plugins if the plugin manager is installed, and the terminal isn't a tty
+" Only enable plugins if the plugin manager is installed, and the terminal isn't a TTY
 if s:capable_t && ! empty(globpath(&rtp, 'autoload/plug.vim'))
-	source $DOTFILES/config/vim/plugins.vim
+	execute 'source ' .. s:path .. '/plugins.vim'
 endif
 " }}}
