@@ -3,28 +3,21 @@
 DOMAIN_NAME='raquellie.com'
 
 COMMAND_GET_IP="curl --fail --silent 'https://ifconfig.me/ip'"
+COMMAND_RETRIEVE_RECORD="dig +short $DOMAIN_NAME"
 
 KEY_API=""
 KEY_SECRET=""
 
-PORKBUN_RETRIEVE="https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/$DOMAIN_NAME/A"
-PORKBUN_UPDATE="https://api.porkbun.com/api/json/v3/dns/editByNameType/$DOMAIN_NAME/A"
-
-if ! CURRENT_IP=$(eval $COMMAND_GET_IP); then
+if ! CURRENT_IP="$(eval $COMMAND_GET_IP)"; then
 	echo "[ERROR] Failed to retrieve the machine IP."
 	exit 1
 fi
 
-COMMAND_RETRIEVE_DNS="curl --silent --header 'Content-Type: application/json' --request POST --data '{\"secretapikey\":\"$KEY_SECRET\",\"apikey\":\"$KEY_API\"}' $PORKBUN_RETRIEVE"
+PORKBUN_UPDATE="https://api.porkbun.com/api/json/v3/dns/editByNameType/$DOMAIN_NAME/A"
 COMMAND_UPDATE_DNS="curl --silent --header 'Content-Type: application/json' --request POST --data '{\"secretapikey\":\"$KEY_SECRET\",\"apikey\":\"$KEY_API\",\"content\":\"$CURRENT_IP\",\"ttl\":\"600\"}' $PORKBUN_UPDATE"
 
 
-if ! CURRENT_DOMAIN_IP=$(eval "$COMMAND_RETRIEVE_DNS" | jq --exit-status --raw-output ".records[].content"); then
-	echo "[ERROR] Failed to retrieve the current DNS record."
-	exit 1
-fi
-
-if [[ "$CURRENT_IP" == "$CURRENT_DOMAIN_IP" ]]; then
+if [[ "$CURRENT_IP" == "$(eval $COMMAND_RETRIEVE_RECORD)" ]]; then
 	echo "[SUCCESS] DNS record unchanged."
 	exit 0
 else
