@@ -16,6 +16,7 @@ declare -a REPOS=(
 )
 
 main() {
+	if [[ -d "$PLUGINS_FOLDER" ]]; then mkdir -p "$PLUGINS_FOLDER"; fi
 	case "$1" in
 		update)
 			mkdir -p "$PLUGINS_FOLDER"

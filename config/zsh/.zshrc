@@ -15,6 +15,7 @@ export RUSTUP_HOME="$XDG_DATA_HOME/rust/rustup"
 export CARGO_HOME="$XDG_DATA_HOME/rust/cargo"
 
 export PATH="$PATH:$DOTFILES/environment/path:$CARGO_HOME/bin"
+
 export ZSH_DATA_DIR="$XDG_DATA_HOME/zsh" # Folder to store the non-config zsh files, out of the repo
 # }}}
 # Modules {{{
@@ -65,12 +66,23 @@ zstyle ':completion:*' substitute 1
 # Bindings {{{
 # Special keys {{{
 function () {
+	local ZKBD_FOLDER="$ZSH_DATA_DIR/zkbd"
+	if [[ ! -d "$ZKBD_FOLDER" ]]; then mkdir -p "$ZKBD_FOLDER"; fi
+
 	local ZKBD_ENV="$TERM-${${DISPLAY:t}:-$VENDOR-$OSTYPE}"
-	local ZKBD_MAP="$XDG_DATA_HOME/zsh/zkbd/$ZKBD_ENV"
+	local ZKBD_MAP="$ZKBD_FOLDER/$ZKBD_ENV"
 	if [[ ! -f "$ZKBD_MAP" ]]; then
 		echo "Warning: no zkbd map found for the current environment: $ZKBD_ENV"
 		read -q "PROMPT?Run 'zkbd'? [y/N]: "
 		if [[ $PROMPT == "y" ]]; then echo ""; autoload -Uz zkbd; zkbd; else return 0; fi
+
+		# Questionable workaround to make this work if $ZDOTDIR isn't set (zkbd hardcodes to $ZDOTDIR or ~/.zkbd)
+		if [[ -d "$HOME/.zkbd" ]]; then
+			for f in $(find "$HOME/.zkbd" -type f); do
+				mv "$f" "$ZKBD_FOLDER/"
+			done
+			rmdir "$HOME/.zkbd"
+		fi
 	fi
 
 	source "$ZKBD_MAP"
@@ -155,7 +167,10 @@ unbak() {
 # Sourcing {{{
 # The most incredible of plugin managers: `plm.sh`!
 for PLUGIN in $("$DOTFILES/scripts"/zsh_plm.sh list); do
-	source "$PLUGIN" 2>/dev/null || source "$PLUGIN"
+	# Avoid ugly errors if the plugin manager isn't in use
+	if [[ -f "$PLUGIN" ]]; then
+		source "$PLUGIN" 2>/dev/null || source "$PLUGIN"
+	fi
 done
 # }}}
 # Configuration {{{
