@@ -118,7 +118,7 @@ augroup END
 
 augroup onwrite_format
 	autocmd!
-	autocmd BufWrite *.{asm,c,h,cpp,hpp,rs,sh,zsh,py} :Autoformat
+	autocmd BufWrite *.{asm,c,h,cpp,hpp,rs,sh,zsh,py,nix} :Autoformat
 augroup END
 " }}}
 
