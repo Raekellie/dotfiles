@@ -3,16 +3,16 @@
 # Featuring `printf`s and `git pull`s, a "Plugin Manager" written by yours truly!
 # Minimal *and* works! It even has colors!
 
-PLUGINS_FOLDER="$XDG_DATA_HOME/zsh_plm"
+PLUGINS_FOLDER="$ZSH_DATA_DIR/zsh_plm"
 
 COLOR="tput setaf 6"
 RESET="tput sgr0"
 
 declare -a REPOS=(
-#"https://github.com/romkatv/zsh-defer"
+	#"https://github.com/romkatv/zsh-defer"
 
-"https://github.com/zdharma-continuum/fast-syntax-highlighting"
-"https://github.com/zsh-users/zsh-autosuggestions"
+	"https://github.com/zdharma-continuum/fast-syntax-highlighting"
+	"https://github.com/zsh-users/zsh-autosuggestions"
 )
 
 main() {

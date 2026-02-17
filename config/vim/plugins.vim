@@ -27,14 +27,16 @@ let lspOpts = #{
 			\	}
 autocmd User LspSetup call LspOptionsSet(lspOpts)
 
-let lspServers = [#{
-			\	name:		'rustlang',
-			\	filetype:	['rust'],
-			\	path:		'/usr/lib/rustup/bin/rust-analyzer',
-			\	args:		[],
-			\	syncInit:	v:true
-			\	}]
-autocmd User LspSetup call LspAddServer(lspServers)
+if executable("rust-analyzer")
+	let lspServers = [#{
+				\	name:		'rustlang',
+				\	filetype:	['rust'],
+				\	path:		'rust-analyzer',
+				\	args:		[],
+				\	syncInit:	v:true
+				\	}]
+	autocmd User LspSetup call LspAddServer(lspServers)
+endif
 " }}}
 
 " vim-gitgutter {{{
