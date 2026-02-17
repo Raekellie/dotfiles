@@ -1,11 +1,11 @@
 eval "$(starship init zsh)"
 
-XDG_CONFIG_HOME=$HOME/.config
-XDG_CACHE_HOME=$HOME/.cache
-XDG_DATA_HOME=$HOME/.local/share
-XDG_STATE_HOME=$HOME/.local/state
-
-DOTFILES=$XDG_CONFIG_HOME/dotfiles
+#XDG_CONFIG_HOME=$HOME/.config
+#XDG_CACHE_HOME=$HOME/.cache
+#XDG_DATA_HOME=$HOME/.local/share
+#XDG_STATE_HOME=$HOME/.local/state
+#
+#DOTFILES=$XDG_CONFIG_HOME/dotfiles
 
 # Plugins {{{
 # Sourcing {{{
