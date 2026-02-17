@@ -1,26 +1,22 @@
-eval "$(starship init zsh)"
-
-#XDG_CONFIG_HOME=$HOME/.config
-#XDG_CACHE_HOME=$HOME/.cache
-#XDG_DATA_HOME=$HOME/.local/share
-#XDG_STATE_HOME=$HOME/.local/state
-#
-#DOTFILES=$XDG_CONFIG_HOME/dotfiles
-
-# Plugins {{{
-# Sourcing {{{
-# The most incredible of plugin managers: `plm.sh`!
-for PLUGIN in $("$DOTFILES/scripts"/zsh_plm.sh list); do
-	source "$PLUGIN" 2>/dev/null || source "$PLUGIN"
-done
-# }}}
-# Configuration {{{
-ZSH_AUTOSUGGEST_STRATEGY=(completion history)
-ZSH_AUTOSUGGEST_MANUAL_REBIND=1
-# }}}
-# }}}
-
 # ZSH {{{
+# Environment variables {{{
+export VISUAL="vim"
+export SYSTEMD_EDITOR="$VISUAL"
+#export BROWSER="elinks"
+
+export FZF_DEFAULT_COMMAND="fd --type f"
+export MANPAGER="less -R --use-color -Dd+y -Du+g"
+
+
+export VIMINIT="source $DOTFILES/config/vim/vimrc"
+export STARSHIP_CONFIG="$DOTFILES/config/starship.toml"
+
+export RUSTUP_HOME="$XDG_DATA_HOME/rust/rustup"
+export CARGO_HOME="$XDG_DATA_HOME/rust/cargo"
+
+export PATH="$PATH:$DOTFILES/environment/path:$CARGO_HOME/bin"
+export ZSH_DATA_DIR="$XDG_DATA_HOME/zsh" # Folder to store the non-config zsh files, out of the repo
+# }}}
 # Modules {{{
 zmodload zsh/complist
 autoload -U compinit; compinit
@@ -41,7 +37,7 @@ unsetopt BEEP
 
 bindkey -v; KEYTIMEOUT=50
 
-HISTFILE="$ZDOTDIR"/.zsh_history
+HISTFILE="$XDG_DATA_HOME/zsh/.zsh_history"
 HISTSIZE=10000
 SAVEHIST=10000
 # }}}
@@ -69,15 +65,15 @@ zstyle ':completion:*' substitute 1
 # Bindings {{{
 # Special keys {{{
 function () {
-	local ZKBD_ENV=$TERM-${${DISPLAY:t}:-$VENDOR-$OSTYPE}
-	local ZKBD_MAP=$ZDOTDIR/.zkbd/$ZKBD_ENV
+	local ZKBD_ENV="$TERM-${${DISPLAY:t}:-$VENDOR-$OSTYPE}"
+	local ZKBD_MAP="$XDG_DATA_HOME/zsh/zkbd/$ZKBD_ENV"
 	if [[ ! -f "$ZKBD_MAP" ]]; then
 		echo "Warning: no zkbd map found for the current environment: $ZKBD_ENV"
 		read -q "PROMPT?Run 'zkbd'? [y/N]: "
 		if [[ $PROMPT == "y" ]]; then echo ""; autoload -Uz zkbd; zkbd; else return 0; fi
 	fi
 
-	source $ZKBD_MAP
+	source "$ZKBD_MAP"
 	[[ -n "${key[Backspace]}"	]] && bindkey -- "${key[Backspace]}"	backward-delete-char
 	[[ -n "${key[Insert]}"		]] && bindkey -- "${key[Insert]}"		overwrite-mode
 	[[ -n "${key[Home]}"		]] && bindkey -- "${key[Home]}"			beginning-of-line
@@ -103,23 +99,6 @@ bindkey "^\ " reverse-menu-complete
 
 bindkey "^l" forward-word
 bindkey "^h" backward-word
-# }}}
-# Environment variables {{{
-export VISUAL="vim"
-export SYSTEMD_EDITOR="$VISUAL"
-#export BROWSER="elinks"
-
-export FZF_DEFAULT_COMMAND="fd --type f"
-export MANPAGER="less -R --use-color -Dd+y -Du+g"
-
-
-export VIMINIT="source $DOTFILES/config/vim/vimrc"
-export STARSHIP_CONFIG="$DOTFILES/config/starship.toml"
-
-export RUSTUP_HOME="$XDG_DATA_HOME/rust/rustup"
-export CARGO_HOME="$XDG_DATA_HOME/rust/cargo"
-
-export PATH="$PATH:$DOTFILES/environment/path:$CARGO_HOME/bin"
 # }}}
 # Aliases {{{
 alias ls="eza"
@@ -172,4 +151,18 @@ unbak() {
 }
 # }}}
 # }}}
+# Plugins {{{
+# Sourcing {{{
+# The most incredible of plugin managers: `plm.sh`!
+for PLUGIN in $("$DOTFILES/scripts"/zsh_plm.sh list); do
+	source "$PLUGIN" 2>/dev/null || source "$PLUGIN"
+done
+# }}}
+# Configuration {{{
+ZSH_AUTOSUGGEST_STRATEGY=(completion history)
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+# }}}
+# }}}
+
+eval "$(starship init zsh)"
 # vim:set foldlevel=1:
