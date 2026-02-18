@@ -1,22 +1,27 @@
 # ZSH {{{
 # Environment variables {{{
-export VISUAL="vim"
-export SYSTEMD_EDITOR="$VISUAL"
-#export BROWSER="elinks"
+# Folder to store non-config zsh files, out of the repo
+export ZSH_DATA_DIR="$XDG_DATA_HOME/zsh"
 
-export FZF_DEFAULT_COMMAND="fd --type f"
-export MANPAGER="less -R --use-color -Dd+y -Du+g"
+# To work better with Home Manager, only set non-essential environment variables here if it's not in use
+if [[ -z "$__HM_SESS_VARS_SOURCED" ]]; then
+	export VISUAL="vim"
+	export SYSTEMD_EDITOR="$VISUAL"
+	#export BROWSER="elinks"
+
+	export FZF_DEFAULT_COMMAND="fd --type f"
+	export MANPAGER="less -R --use-color -Dd+y -Du+g"
 
 
-export VIMINIT="source $DOTFILES/config/vim/vimrc"
-export STARSHIP_CONFIG="$DOTFILES/config/starship.toml"
+	export RUSTUP_HOME="$XDG_DATA_HOME/rust/rustup"
+	export CARGO_HOME="$XDG_DATA_HOME/rust/cargo"
 
-export RUSTUP_HOME="$XDG_DATA_HOME/rust/rustup"
-export CARGO_HOME="$XDG_DATA_HOME/rust/cargo"
 
-export PATH="$PATH:$DOTFILES/environment/path:$CARGO_HOME/bin"
+	export VIMINIT="source $DOTFILES/config/vim/vimrc"
+	export STARSHIP_CONFIG="$DOTFILES/config/starship.toml"
 
-export ZSH_DATA_DIR="$XDG_DATA_HOME/zsh" # Folder to store the non-config zsh files, out of the repo
+	export PATH="$PATH:$DOTFILES/environment/path:$CARGO_HOME/bin"
+fi
 # }}}
 # Modules {{{
 zmodload zsh/complist
