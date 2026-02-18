@@ -37,6 +37,17 @@ if executable("rust-analyzer")
 				\	}]
 	autocmd User LspSetup call LspAddServer(lspServers)
 endif
+if executable("nixd")
+	let lspServers = [#{
+				\	name:		'nixd',
+				\	filetype:	['nix'],
+				\	path:		'nixd',
+				\	args:		[],
+				\	rootSearch:	['flake.nix', '.git'],
+				\	syncInit:	v:true
+				\	}]
+	autocmd User LspSetup call LspAddServer(lspServers)
+endif
 " }}}
 
 " vim-gitgutter {{{
