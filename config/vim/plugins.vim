@@ -33,6 +33,7 @@ if executable("rust-analyzer")
 				\	filetype:	['rust'],
 				\	path:		'rust-analyzer',
 				\	args:		[],
+				\	rootSearch:	['Cargo.toml', '.git'],
 				\	syncInit:	v:true
 				\	}]
 	autocmd User LspSetup call LspAddServer(lspServers)
