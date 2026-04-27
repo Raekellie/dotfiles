@@ -87,7 +87,7 @@ abbreviate teh the
 " }}}
 " Commands {{{
 " Wayland clipboard {{{
-if $XDG_SESSION_TYPE == "wayland"
+if $XDG_SESSION_TYPE == "wayland" && executable('wl-copy')
 	function! s:WlCopy(...)
 		let l:register='0'
 		if a:0 > 1
