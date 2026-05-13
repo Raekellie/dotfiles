@@ -85,7 +85,7 @@ nnoremap <leader>s :%s/\<<c-r><c-w>\>/
 " Abbreviations {{{
 abbreviate teh the
 " }}}
-" Commands {{{
+" Definitions {{{
 " Wayland clipboard {{{
 if $XDG_SESSION_TYPE == "wayland" && executable('wl-copy')
 	function! s:WlCopy(...)
@@ -103,6 +103,11 @@ if $XDG_SESSION_TYPE == "wayland" && executable('wl-copy')
 	command! WlPaste silent r ! 'wl-paste'
 endif
 " }}}
+
+function! IsInRtp(file)
+	return !empty(globpath(&runtimepath, '**/'..a:file))
+endfunction
+
 " Execute the current file. Mnemonic: (Single|Script|Shebang)run
 command! Srun :execute 'vertical terminal '..fnameescape(expand('%:p'))
 " }}}
@@ -115,11 +120,6 @@ augroup onnew_templates
 				\ |	execute '$d_'
 				\ |	execute '0'
 augroup END
-
-augroup onwrite_format
-	autocmd!
-	autocmd BufWrite *.{asm,c,h,cpp,hpp,rs,sh,zsh,py,nix} :Autoformat
-augroup END
 " }}}
 
 " Additional configuration files {{{
@@ -128,7 +128,7 @@ if $TERM =~ "kitty"
 	execute 'source ' .. s:path .. '/kitty.vim'
 endif
 " Only enable plugins if the plugin manager is installed, and the terminal isn't a TTY
-if s:capable_t && ! empty(globpath(&rtp, 'autoload/plug.vim'))
+if s:capable_t && IsInRtp('autoload/plug.vim')
 	execute 'source ' .. s:path .. '/plugins.vim'
 endif
 " }}}
