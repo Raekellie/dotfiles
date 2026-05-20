@@ -4,7 +4,7 @@ let s:path=fnamemodify(resolve(expand('<sfile>:p')), ':h')	" https://stackoverfl
 
 " Directories {{{
 " Vim follows the XDG Base Directory specification, except for the 'viminfofile'
-let &viminfofile =	$XDG_STATE_HOME .. '/vim/viminfo'
+let &viminfofile =	$XDG_STATE_HOME .. '/vim/viminfo'		| call mkdir(fnamemodify(&viminfofile, ':p:h'), 'p', 0700)
 
 let &runtimepath =	$XDG_DATA_HOME	.. '/vim'	..	',' ..	&runtimepath
 let &runtimepath =	s:path			..	','		..			&runtimepath " This path will be the first in the list
